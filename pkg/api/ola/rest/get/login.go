@@ -1,7 +1,7 @@
 package get
 
 import (
-	controller "github.com/ola/pkg/controllers"
+	"github.com/ola/pkg/controller"
 	"github.com/ola/pkg/handler"
 	"github.com/valyala/fasthttp"
 )
@@ -11,16 +11,16 @@ func Login(ctx *fasthttp.RequestCtx) {
 
 	params := []string{"username", "pass"}
 	parameters := controller.GetParameters(ctx, params)
-	user := handler.GetUser(parameters["username"])
+	user, err := handler.GetUser(parameters["username"])
 
 	if user != nil {
 		if user.Password == parameters["pass"] {
-			handler.UpdateLoggedStatus(user.Username, true)
+			err = handler.UpdateLoggedStatus(user.Username, true)
 			controller.SucessResponse(ctx, "pass")
 		} else {
-			controller.ErrorResponse(ctx, "Given password fot this user is wrong, please try again.")
+			controller.ErrorResponse(ctx, "Given password for this user is wrong, please try again.")
 		}
 	} else {
-		controller.ErrorResponse(ctx, "This user do not exist")
+		controller.ErrorResponse(ctx, err.Error())
 	}
 }

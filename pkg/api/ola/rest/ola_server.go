@@ -14,7 +14,7 @@ func NewServer(port string) {
 
 	router := fasthttprouter.New()
 	router.GET("/login/:username/:pass", get.Login)
-	router.POST("/signup", post.SignUp)
+	router.POST("/signup/:username/:pass", post.SignUp)
 
 	log.Print("server running on port " + port)
 	log.Fatal(fasthttp.ListenAndServe(port, router.Handler))

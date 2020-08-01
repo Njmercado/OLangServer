@@ -2,6 +2,7 @@ package handler
 
 import (
 	"context"
+	"errors"
 	"log"
 
 	"github.com/ola/pkg/storage/mongodb"
@@ -13,25 +14,25 @@ var mongoDB = mongodb.NewMongoDB("mongodb://localhost:27017", "Ola")
 var userCollection = mongoDB.DB.Collection("user")
 
 //GetUser : this function allow me to get some user infor based on its username
-func GetUser(username string) *collections.User {
+func GetUser(username string) (*collections.User, error) {
 
 	user := &collections.User{}
 
 	err := userCollection.FindOne(context.TODO(), bson.M{
-		"username": username,
+		"Username": username,
 	}).Decode(&user)
 
 	if err != nil {
 		log.Print(err)
 		log.Print("This user do not exist")
-		return nil
+		return nil, errors.New("This user do not exist")
 	}
 
-	return user
+	return user, nil
 }
 
 //UpdateLoggedStatus : allow to update user logged status.
-func UpdateLoggedStatus(username string, status bool) {
+func UpdateLoggedStatus(username string, status bool) error {
 	result := userCollection.FindOneAndUpdate(
 		context.TODO(),
 		bson.M{
@@ -44,7 +45,26 @@ func UpdateLoggedStatus(username string, status bool) {
 
 	if result.Err() != nil {
 		log.Print("Given user couldn't be found")
+		return errors.New("Given user couldn't be found")
 	} else {
 		log.Print("Given user updated correctly")
+		return errors.New("Given user updated correctly")
 	}
+}
+
+func CreateUser(username, password string) error {
+
+	user := collections.User{Username: username, Password: password}
+
+	result, err := userCollection.InsertOne(
+		context.TODO(),
+		user,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	log.Print(result.InsertedID)
+	return nil
 }

@@ -1,0 +1,22 @@
+Changes:
+    General:
+    pkg:
+        api:
+            ola:
+                rest:
+                    post:
+                        register:
+                            ? Ruta terminada.
+        controller:
+            signupController:
+                + Archivo creado.
+                ? Controla la verificación tanto de usuario como contraseña, en cuanto a las reglas presentadas para cada una.
+                ? Dentro de este archivo se agregará la funcion de generar contraseñas y usuarios que cumplan con las reglas presentes.
+        storage:
+            mongodb:
+                collections:
+                    user:
+                        - Eliminada función por defecto para modificar el valor de tipo de animal. --> innecesaria.
+                    animal:
+                        ? El parametro AnimalPopularNames, ahora es una lista.
+                        + Agregada la configuración para poder leer como json y como bson.
