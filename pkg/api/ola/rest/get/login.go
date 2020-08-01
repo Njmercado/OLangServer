@@ -1,10 +1,15 @@
 package get
 
 import (
+	"github.com/ola/pkg/config/env"
 	"github.com/ola/pkg/controller"
 	"github.com/ola/pkg/handler"
 	"github.com/valyala/fasthttp"
 )
+
+func getDecryptedPassword(password string) string {
+	return string(controller.Decrypt([]byte(password), env.GetPassPhrase()))
+}
 
 //Login function to login user
 func Login(ctx *fasthttp.RequestCtx) {
@@ -14,9 +19,16 @@ func Login(ctx *fasthttp.RequestCtx) {
 	user, err := handler.GetUser(parameters["username"])
 
 	if user != nil {
-		if user.Password == parameters["pass"] {
+
+		password := getDecryptedPassword(user.Password)
+
+		if password == parameters["pass"] {
 			err = handler.UpdateLoggedStatus(user.Username, true)
-			controller.SucessResponse(ctx, "pass")
+			if err != nil {
+				controller.ErrorResponse(ctx, err.Error())
+			} else {
+				controller.SucessResponse(ctx, "pass")
+			}
 		} else {
 			controller.ErrorResponse(ctx, "Given password for this user is wrong, please try again.")
 		}

@@ -5,6 +5,9 @@ import (
 	"errors"
 	"log"
 
+	"github.com/ola/pkg/config/env"
+	"github.com/ola/pkg/controller"
+
 	"github.com/ola/pkg/storage/mongodb"
 	"github.com/ola/pkg/storage/mongodb/collections"
 	"go.mongodb.org/mongo-driver/bson"
@@ -36,10 +39,10 @@ func UpdateLoggedStatus(username string, status bool) error {
 	result := userCollection.FindOneAndUpdate(
 		context.TODO(),
 		bson.M{
-			"username": username,
+			"Username": username,
 		}, bson.M{
 			"$set": bson.M{
-				"logged": status,
+				"Logged": status,
 			},
 		}, nil)
 
@@ -54,7 +57,9 @@ func UpdateLoggedStatus(username string, status bool) error {
 
 func CreateUser(username, password string) error {
 
-	user := collections.User{Username: username, Password: password}
+	cypherPassword := controller.Encrypt([]byte(password), env.GetPassPhrase())
+
+	user := collections.User{Username: username, Password: string(cypherPassword)}
 
 	result, err := userCollection.InsertOne(
 		context.TODO(),

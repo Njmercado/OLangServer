@@ -4,19 +4,13 @@ Changes:
         api:
             ola:
                 rest:
-                    post:
-                        register:
-                            ? Ruta terminada.
+                    get:
+                        login:
+                            + Agregada funcion para poder decifrar la contraseña traida de la base de datos. --> verificación.
         controller:
-            signupController:
-                + Archivo creado.
-                ? Controla la verificación tanto de usuario como contraseña, en cuanto a las reglas presentadas para cada una.
-                ? Dentro de este archivo se agregará la funcion de generar contraseñas y usuarios que cumplan con las reglas presentes.
-        storage:
-            mongodb:
-                collections:
-                    user:
-                        - Eliminada función por defecto para modificar el valor de tipo de animal. --> innecesaria.
-                    animal:
-                        ? El parametro AnimalPopularNames, ahora es una lista.
-                        + Agregada la configuración para poder leer como json y como bson.
+            cryptoController:
+                + Archivo agregado.
+                ? Este archivo funciona para poder manejar todo lo relacionado con el cifrado y decifrado de información. 
+        handler:
+            userHandler:
+                + Agregado el cifrar la contraseña antes de poder ser almacenada.
